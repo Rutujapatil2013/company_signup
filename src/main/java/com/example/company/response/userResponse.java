@@ -22,4 +22,12 @@ public class userResponse {
 	private boolean isDeleted;
 	private UserRole role;
 	private boolean verificationEnabled;
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
 }

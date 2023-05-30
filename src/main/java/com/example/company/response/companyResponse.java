@@ -22,7 +22,9 @@ public class companyResponse {
     private Boolean isDeleted;
     private String address;
     private List<Users> users;
+    
 //    private List<UserRole> role;
+//	public String toString;
     
 //	public void setRole(List<UserRole> role) {
 //		// TODO Auto-generated method stub

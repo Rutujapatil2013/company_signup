@@ -36,6 +36,26 @@ public class Users {
     @OneToOne //users-many & roleid-one
     @JoinColumn(name="role_id")
     private UserRole role;
+    
+    public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	
+	public void setPassword(String password) {
+//		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//	    String usePassword = encoder.encode(password);
+		this.password = password; 
+	}
 
     
 }

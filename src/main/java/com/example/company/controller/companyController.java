@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.company.entity.UserRole;
+import com.example.company.entity.Users;
 import com.example.company.repository.companyRepository;
 import com.example.company.request.companyRequest;
 import com.example.company.response.companyResponse;
@@ -62,8 +63,8 @@ public class companyController {
     //post company
     @PostMapping("/register")
     @Operation(summary = "Register new copmapny", description = "Update company details. ")
-	public ResponseEntity<companyResponse> signUp(@RequestBody companyRequest companyRequest) {
-		companyResponse response = service.createCompany(companyRequest);
+	public ResponseEntity<String> signUp(@RequestBody companyRequest companyRequest) throws Exception {
+		String response = service.createCompany(companyRequest);
 		return ResponseEntity.ok(response);
 	}
     

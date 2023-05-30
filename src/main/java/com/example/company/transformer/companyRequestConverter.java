@@ -1,8 +1,11 @@
 package com.example.company.transformer;
 
+import org.springframework.context.annotation.Configuration;
+
 import com.example.company.entity.company;
 import com.example.company.request.companyRequest;
 
+@Configuration
 public class companyRequestConverter {
 	
 	public static company postCompanyEntity(companyRequest company) {

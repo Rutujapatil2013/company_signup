@@ -42,6 +42,8 @@ public class roleMenuMappingController {
     public roleMenuMapping saveRoleMenuMapping(@RequestBody roleMenuMapping mapping) {
         return service.saveRoleMenuMapping(mapping);
     }
+    
+    
 
     @DeleteMapping("/delete/{mappingId}")
     @Operation(summary = "Delete role-menu mapping", description = "Delete a role-menu mapping by its ID")

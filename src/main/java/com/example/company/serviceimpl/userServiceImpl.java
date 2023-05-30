@@ -6,15 +6,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.company.repository.UserRepo;
 import com.example.company.repository.usersRepository;
 import com.example.company.service.UserService;
+import com.example.company.transformer.userRequestConverter;
 import com.example.company.transformer.userResponseConverter;
 //import com.companydatabase.repository.UserRepository;
 import com.example.company.entity.Users;
@@ -30,7 +35,11 @@ public class userServiceImpl implements UserService{
 	
 	@Autowired
 	private usersRepository repository;
+	
+	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
 	private UserRepo repo;
 
 	 @Autowired
@@ -43,12 +52,8 @@ public class userServiceImpl implements UserService{
  
 	@Override
 	public userResponse createUser(userRequest request) throws ResourceNotFoundException {
-//		if (userRequest.getCompany() != null && !userRequest.getCompany().getIsDeleted()) {
-//			Company company = companyRepository.findById(userRequest.getCompany().getCompanyId()).orElseThrow(
-//					() -> new ResourceNotFoundException("Company", "id", userRequest.getCompany().getCompanyId()));
 
 			Users user = UserRequestConverter.toEntity(request);
-//			user.setCompany(company);
 			Users savedUser = repository.save(user);
 			System.out.println("data saved");
 			System.out.println("going to email meth");
@@ -72,43 +77,64 @@ public class userServiceImpl implements UserService{
 
     @Override
     public Users saveUser(Users user) {
+    	String encryptedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
+        Users savedUser = this.repository.save(user);
         return repository.save(user);
     }
+    
+    @Override
+	public String updateUser(Long userId, userRequest request) throws Exception {
+		try {
+			Optional<Users> optionaUser = repository.findById(userId);
+			if (optionaUser.isPresent()) {
+				Users user = optionaUser.get();
+				userRequestConverter.updateUsersEntity(user, request);
+				repository.save(user);
+				return "User updated successfully.";
+			} else {
+				return "User not found.";
+			}
+		} catch (Exception e) {
+			// Handle exception
+			throw new Exception("Error occurred while updating user with ID: " + userId, e);
+		}
+	}
 
     @Override
     public void deleteUser(Long userId) {
     	repository.deleteById(userId);
     }
 
-//	 private void sendVerificationEmail(Users user) {
-//	        // Generate a random verification code
-//		 String verificationCode = UUID.randomUUID().toString().substring(0, 4);
-//			System.out.println("token genrated : "+verificationCode);
-//			
-//	        // Store the verification code in the map
-//	        verificationCodes.put(user.getEmail(), verificationCode);
-//	        System.out.println("saved in hash set"+verificationCodes);
-//	        // Send the verification email
-//	        String subject = "Verify your email address";
-//	        String message = "Please click on the following link to verify your email address: "
-//	            + "http://localhost:8082/users/verify?email=" + user.getEmail() + "&code=" + verificationCode;
-//	        System.out.println("mail genrated");
-//	        sendEmail(user.getEmail(), subject, message);
-//	    }
-//	 
-//	 private void sendEmail(String email, String subject, String body) {
-//		 System.out.print("send email called ");
-//	        SimpleMailMessage message = new SimpleMailMessage();
-//			 System.out.println("send with my mail id called ");
-//	        message.setFrom("pranumore1234@gmail.com");
-//	        System.out.println("send with my mail id called "+email);
-//	        message.setTo(email);
-//	        message.setSubject(subject);
-//	        message.setText(body);
-//	        mailSender.send(message);
-//	        System.out.println("mail successfully send");
-//	    }
-//	 
+	 private void sendVerificationEmail(Users user) {
+	        // Generate a random verification code
+		 String verificationCode = UUID.randomUUID().toString().substring(0, 4);
+			System.out.println("token genrated : "+verificationCode);
+			
+	        // Store the verification code in the map
+	        verificationCodes.put(user.getEmail(), verificationCode);
+	        System.out.println("saved in hash set"+verificationCodes);
+	        // Send the verification email
+	        String subject = "Verify your email address";
+	        String message = "Please click on the following link to verify your email address: "
+	            + "http://localhost:8082/users/verify?email=" + user.getEmail() + "&code=" + verificationCode;
+	        System.out.println("mail genrated");
+	        sendEmail(user.getEmail(), subject, message);
+	    }
+	 
+	 private void sendEmail(String email, String subject, String body) {
+		 System.out.print("send email called ");
+	        SimpleMailMessage message = new SimpleMailMessage();
+			 System.out.println("send with my mail id called ");
+	        message.setFrom("pranumore1234@gmail.com");
+	        System.out.println("send with my mail id called "+email);
+	        message.setTo(email);
+	        message.setSubject(subject);
+	        message.setText(body);
+	        mailSender.send(message);
+	        System.out.println("mail successfully send");
+	    }
+	 
 //	 @Override
 //	  public ResponseEntity<String> verifyEmail(String email, String code) {
 //	        // Get the verification code from the map
@@ -172,29 +198,27 @@ public class userServiceImpl implements UserService{
 	        this.passwordEncoder = bCryptPasswordEncoder;
 	    }
 		
+
 		
-		public Optional<userResponse> login(String email, String password) throws Exception {
-			try {
-				Optional<Users> userOptional = repository.findByEmail(email);
-				if(!userOptional.isEmpty()) {
-					if (passwordEncoder.matches(password, userOptional.get().getPassword()))
-					{
-//						System.out.printf(password,userOptional.get().getPassword());
-						if (password.length() < 5) {
-		                    throw new Exception("Password is too short");
-		                }
-						userResponse userResponse = userResponseConverter.convertToResponse(userOptional.get());
-						return Optional.of(userResponse);
-					}
-					else {
-						throw new Exception("Password not matches");
-					}
-				}else {
-					throw new Exception(" User not found");
-				}
-			} catch (Exception e) {
-				// Handle exception
-				throw new Exception( e.getMessage());
-			}
+		public String login(String email, String password) {
+		    try {
+		        List<Users> users = repository.findByEmail(email);
+		        if (users.isEmpty()) {
+		            return "User not found";
+		        }
+		      
+		        Users user = users.get(0); // Assuming the first user is the desired one
+		        if (passwordEncoder.matches(password, user.getPassword())) {
+		            userResponse userResponse = userResponseConverter.convertToResponse(user);
+		            return "Login successful\n" + userResponse.toString();
+		        } else {
+		            return "Password does not match";
+		        }
+		    } catch (Exception e) {
+		        return "Internal server error";
+		    }
 		}
+		
+		
+		
 }

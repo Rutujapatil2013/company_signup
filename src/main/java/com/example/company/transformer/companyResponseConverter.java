@@ -3,11 +3,14 @@ package com.example.company.transformer;
 
 import com.example.company.entity.company;
 import com.example.company.response.companyResponse;
+
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+@Configuration
 public class companyResponseConverter {
 	
-	public static companyResponse convertToResponse(company companyEntity) {
+	public  companyResponse convertToResponse(company companyEntity) {
 	    companyResponse response = new companyResponse(); 
 	    
 	    response.setCompanyId(companyEntity.getCompanyId());
@@ -23,6 +26,9 @@ public class companyResponseConverter {
 	    }
 	    return response;
 	}
+	
+	
+	
 
 	
 	

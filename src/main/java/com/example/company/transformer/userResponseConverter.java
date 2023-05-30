@@ -1,8 +1,11 @@
 package com.example.company.transformer;
 
+import org.springframework.context.annotation.Configuration;
+
 import com.example.company.entity.Users;
 import com.example.company.response.userResponse;
 
+@Configuration
 public class userResponseConverter {
 	
 	public static userResponse convertToResponse(Users user) {

@@ -19,6 +19,10 @@ public class userRequest {
 	private boolean isDeleted;
 	private UserRole role;
 	private boolean verificationEnabled;
+	
+	public String getEmail() {
+		return email;
+	}
 //	public Object getRoleId() {
 //		// TODO Auto-generated method stub
 //		return null;

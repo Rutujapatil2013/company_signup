@@ -45,6 +45,11 @@ public class company {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public boolean isPresent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
    
 }

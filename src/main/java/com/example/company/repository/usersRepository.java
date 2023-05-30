@@ -1,5 +1,6 @@
 package com.example.company.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,11 @@ public interface usersRepository extends JpaRepository <Users, Long> {
 
 	void save(UserRole userRole);
 
-	Optional<Users> findByEmail(String email);
+//	Optional<Users> findByEmail(String email);
+
+	List<Users> findByEmail(String email);
+
+//	void updateByUserId(Long userId);
+
 	
 }

@@ -23,10 +23,13 @@ public interface UserService {
     public Users getUserById(Long userId);
     public Users saveUser(Users user);
     public void deleteUser(Long userId);
+//    public void updateUser(Long userId);
     userResponse createUser(userRequest userRequest) throws ResourceNotFoundException;
-	 public ResponseEntity<String> verifyEmail(String email, String code);
-	public void resetPassword(String email, String code);
-	public void sendResetPasswordEmail(String email);
-	Optional<userResponse> login(String email, String password) throws Exception;
+//	 public ResponseEntity<String> verifyEmail(String email, String code);
+//	public void resetPassword(String email, String code);
+//	public void sendResetPasswordEmail(String email);
+//	Optional<userResponse> login(String email, String password) throws Exception;
+	String login(String email, String password) throws Exception;
+	String updateUser(Long userId, userRequest request) throws Exception;
 
 }

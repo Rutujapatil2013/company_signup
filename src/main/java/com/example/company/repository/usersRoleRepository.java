@@ -10,7 +10,7 @@ import com.example.company.entity.UserRole;
 @Repository
 public interface usersRoleRepository extends JpaRepository<UserRole, Long> {
 
-//	UserRole save(UserRole userRole);
+	UserRole save(UserRole userRole);
 //	void updateById(Long roleId);
 	
 }
